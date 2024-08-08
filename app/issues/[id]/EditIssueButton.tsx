@@ -10,7 +10,7 @@ interface Props {
 const EditIssueButton = ({ issueId }: Props) => {
   return (
     <Button className="">
-      <Pencil2Icon /> <Link href={`/issues/${issueId}/edit`}>Edit Issue</Link>
+      <Pencil2Icon /> <Link href={`/issues/edit/${issueId}`}>Edit Issue</Link>
     </Button>
   );
 };
