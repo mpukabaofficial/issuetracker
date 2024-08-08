@@ -14,6 +14,7 @@ import {
   Text,
 } from "@radix-ui/themes";
 import { usePathname } from "next/navigation";
+import { Skeleton } from "./components";
 
 const Navbar = () => {
   return (
@@ -61,7 +62,7 @@ const NavLinks = () => {
 
 const AuthStatus = () => {
   const { status, data: session } = useSession();
-  if (status === "loading") return <div>Loading...</div>;
+  if (status === "loading") return <Skeleton width="3rem" />;
 
   if (status === "unauthenticated")
     return (
