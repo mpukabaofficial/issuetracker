@@ -4,6 +4,7 @@ import { Issue, User } from "@prisma/client";
 import { Select } from "@radix-ui/themes";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 const AssigneeSelect = ({ issue }: { issue: Issue }) => {
   const {
@@ -28,34 +29,41 @@ const AssigneeSelect = ({ issue }: { issue: Issue }) => {
   }
 
   return (
-    <Select.Root
-      defaultValue={issue.assignedToUserId || ""} // Default value is the current assignee
-      onValueChange={async (userId) => {
-        console.log("Assigning user", userId);
-        await axios.patch("/api/issues/" + issue.id, {
-          assignedToUserId: userId || null,
-        });
-      }}
-    >
-      <Select.Trigger placeholder="Assign user"></Select.Trigger>
-      <Select.Content>
-        <Select.Group>
-          <Select.Label>Suggestions</Select.Label>
-          <Select.Item value="">Unassign</Select.Item>
-          {users?.length ? (
-            users.map((user) => (
-              <Select.Item key={user.id} value={user.id}>
-                {user.name}
+    <>
+      <Select.Root
+        defaultValue={issue.assignedToUserId || ""} // Default value is the current assignee
+        onValueChange={(userId) => {
+          axios
+            .patch("/api/issues/" + issue.id, {
+              assignedToUserId: userId || null,
+            })
+            .catch((error) => {
+              console.error("Failed to update assignee", error);
+              toast.error("Failed to update assignee");
+            });
+        }}
+      >
+        <Select.Trigger placeholder="Assign user"></Select.Trigger>
+        <Select.Content>
+          <Select.Group>
+            <Select.Label>Suggestions</Select.Label>
+            <Select.Item value="">Unassign</Select.Item>
+            {users?.length ? (
+              users.map((user) => (
+                <Select.Item key={user.id} value={user.id}>
+                  {user.name}
+                </Select.Item>
+              ))
+            ) : (
+              <Select.Item disabled value="">
+                No users available
               </Select.Item>
-            ))
-          ) : (
-            <Select.Item disabled value="">
-              No users available
-            </Select.Item>
-          )}
-        </Select.Group>
-      </Select.Content>
-    </Select.Root>
+            )}
+          </Select.Group>
+        </Select.Content>
+      </Select.Root>
+      <Toaster />
+    </>
   );
 };
 
